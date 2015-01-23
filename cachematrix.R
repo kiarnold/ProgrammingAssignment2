@@ -5,7 +5,7 @@
 ## After this, the functions will merely return the stored inverse result, saving time.
 ##
 ## To use: assume your matrix is "m"
-## Call: cacheSolve(makeCacheMatrix(), m)... 
+## Call: cacheSolve(makeCacheMatrix(m)) 
 
 ## This function creates a special "matrix" object that can cache its inverse.
 ## The whole functions returns a list with each of the four functions in it.
@@ -16,16 +16,33 @@
 ## "getInverse" will return the cached inverse matrix
 
 makeCacheMatrix <- function(x = matrix()) {
-        matrixInverse <- NULL
+        inverse <- NULL
         
+        ## sets x to be the given matrix
+        ## and resets the inverse as null
         set <- function(y) {
-                x <<- y
-                matrixInverse <<- NULL
+            x <<- y
+
+            inverse <<- NULL
         }
-        calculateInverse <- function() matrixInverse <<- solve(x)
-        getInverse <- function() matrixInverse
         
-        list(set = set, calculateInverse = calculateInverse, getInverse = getInverse)
+        ## returns the matrix
+        get <- function() {
+            x
+        }
+        
+        ##calculates the inverse using solve and stores it
+        calculateInverse <- function() {
+            inverse <- solve(x)
+        }
+        
+        ## returns the inverse
+        getInverse <- function() {
+            inverse
+        }
+        
+        ## the list of commands
+        list(set = set, get = get, calculateInverse = calculateInverse, getInverse = getInverse)
 
 }
 
@@ -39,17 +56,20 @@ makeCacheMatrix <- function(x = matrix()) {
 ## Otherwise, the function will calculate and store the matrix, and then it
 ## will return the inverse.
 
-cacheSolve <- function(x, ...) {
+cacheSolve <- function(fun, ...) {
         ## Return a matrix that is the inverse of 'x'
+    
+        inverse <- fun$getInverse()
         
-        inverse <- x$getInverse()
+        ## checks to see if the inverse has been calculated yet
         if(!is.null(inverse)) {
-                message("Got cached data.")
+                message("Got cached Matrix.")
                 return(inverse)
         }
         
         message("Matrix not cached, calculating...")
-        
-        x$calculateInverse()
-        x$getInverse()
+
+        ## calculates, stores, and returns the inverse
+        m <- fun$calculateInverse()
+        m
 }
